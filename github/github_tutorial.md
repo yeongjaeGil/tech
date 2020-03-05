@@ -69,7 +69,14 @@ $ git fetch [원격저장소위치] [브랜치 이름]
     : 원격저장소의 브랜치와 커밋들을 로컬저장소와 동기화함. 옵션을 생략하면 모든 원격저장소에서 모든 브랜치를 가져온다.
 $ git merge 브랜치 이름
     : 지정한 브랜치의 커밋들을 현재 브랜치 및 워킹트리에 반영
+```
 
+5) 리눅스 인증
+```
+$ git config credential.helper store
+    :passwdrk .git-credentials에 남는 문제가 있다.
+$ git config --unset credential.helper #옵션 삭제
+$ rm ~/.git-credentials 
 ```
 
 ### 2. 용어 정리
