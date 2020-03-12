@@ -33,9 +33,12 @@ pip install -r requirements.txt
 ps -ef|grep [keyword (ex:python)]
 ```
 
-포트확인  
+포트  
 ```
+sudo ufw allow [PID(ex:8000)]
+    :포트 열기
 losf -i:[PID(ex:8014)]
+    :포트 확인
 ```
 
 해당 포트 프로세스 죽이기  
