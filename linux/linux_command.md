@@ -2,18 +2,32 @@ ssh-login
 ```
 $ ssh <ID>@<IP> -p <port>
 ```
+
 폴더 삭제
 ```
 rm -rf <folderName>
 ```
+
+폴더 이동
+```
+mv [DIR_old] [DIR_new]
+```
+
+폴더 복사
+```
+cp -r [DIR_old] [DIR_new]
+```
+
 버퍼확인
 ```
 free -h
 ```
+
 GPU 확인
 ```
 nvidia-smi
 ```
+
 가상환경  
 ```
 pip install virtualenv
@@ -25,7 +39,6 @@ source active <virtual_envs>
 
 pip freeze > requirements.txt
 pip install -r requirements.txt
-
 ```
 
 프로세스 확인:keyword  
@@ -56,5 +69,9 @@ ps -ef | grep defunct | awk '{print $3}'|xargs kill -9
 echo 3 > /proc/sys/vm/drop_caches
 ```
 
-
+권한 변경
+```
+chown –R root:root <directory (ex:/data/yj)>
+chown –R 777 <directory (ex:/data/yj)>
+```
 
