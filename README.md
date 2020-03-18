@@ -16,4 +16,8 @@ YJ's tech repo
     - kubenetes
 ---
 ## docker
-    
+
+- Markdown practice
+https://www.markdowntutorial.com/
+latex
+- https://web.marp.app/

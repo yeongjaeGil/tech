@@ -26,6 +26,11 @@ CLEAN CODE python
 - Annotation
     - 기본 아이디어: 코드 사용자에게 함수 인자로 어떤 값이 와야 하는지 힌트를 주는 것. 변수의 예상 타입을 지정할 수 있다.
     - 파이썬은 동적으로 타입을 결정하기 때문에 함수를 메서드를 거치면 변수나 객체의 값이 무엇인지 알기 어려운 경우가 많음. 어노테이션을 통해 이러한 정보를 명시하면 향후 개발에 도움이 됨. (python은 타입을 강제하지 않는다.)
+```python
+def type_test(vari:int)->str:
+    return vari
+```
+- 강제성은 없지만 코드를 읽는 사람이 이해하기 쉽다.
 #### annotation은 docstring을 대체하는 것일까?
 - docstring과 annotation은 서로 보와적인 개념이다.
 - 하지만, docstring을 통해 보다 나은 문서화를 위한 여지를 남겨두어야 한다.
@@ -54,6 +59,7 @@ CLEAN CODE python
     - 리눅스 개발환경에서 빌드를 자동화하는 가장 일반적인 방법: makefile
     - 빌드이외에도 포매팅 검사나 코딩 컨벤션 검사를 자동화하기 위해 사용할 수 있다.
     - 테스트를 위한 각각의 target을 만들고, 이것들을 모두 실행하는 또 다른 target을 만드는 것이다.
+
 typelint:  
 mypy src/ tests/  
 
