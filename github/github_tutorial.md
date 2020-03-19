@@ -17,6 +17,13 @@ $git init
 $git config --global user.email <E_mail(ex:"yjgil123@gmail.com")>
 $git config --global user.name <ID (ex:"yeongjaeGil")>
 $git remote add origin <Git repo (ex:https://Github.com/yeongjaeGil/git-test.git)>
+    - $git remote add upstream <Git repo (ex:https://Github.com/yeongjaeGil/git-test.git)>
+    - $git fetch upstream
+    - $git checkout master
+    - #git merge upstream/master
+    - *C) 저장소 이름을 사람마다 다르게 할 수 있으니 upstream으로 통일한듯
+$git remote -v
+    :연결되어 있는 원격 주소 조회
 $git config credential.helper store # 한번만 저장하면됨
 ```
 
@@ -141,6 +148,17 @@ $git branch -D <브랜치 이름>
 $git log --oneline --all
     : 변경된 브랜치 확인    
 ```
+---
+#### 협업 하는 방법 (계정2개/1레포)
+- 1. Fork
+- 2. clone/remote 설정
+- 3. branch 생성
+- 4. 코드 작성 -> add, commit, push origin <branch name>
+- 5. Pull Request 생성(레포 주인이 merge할 지 판단)
+        - C) 이것도 명령어 있는지 찾아보기, hub 패키지 깔아서 하는 것 같긴함.
+- 6. 코드 리뷰 및 Merge Pull Request
+- 7. Merge 이후 branch 삭제 및 master 동기화(git pull 로 받는다.)
+
 ---
 - * revert를 사용해서 커밋을 되돌리는 경우
     - C1<-F1<-C2<-F2<-C3(master)

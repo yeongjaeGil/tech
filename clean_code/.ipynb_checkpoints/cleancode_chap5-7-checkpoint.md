@@ -370,8 +370,41 @@ Descriptor
 Generator
 ---
 - 프로그램 성능을 향상시키는 제너레이터 만들기
-- 이터레이터가 파이썬에 어떻게
+- 고성능이면서도 메모리를 적게 사용하는 반복을 위한 방법(메모리를 줄이기 위해)
+- 제너레이터는 한 번에 하나씩 구성요소를 반환해주는 이터러블을 생성해주는 객체
+- 거대한 요소를 한꺼번에 메모리에 저장하는 대신 특정 요소를 어떻게 만드는지 아는 객체를 만들어서 필요할 때마다 하나씩만 가져오는 것이다.
 
+```python
+# 현재 구현하고자 하는 함수: pusrchase정보를 '하나씩' 받아서 업데이트 시킴
+def _load_purchase(filename):
+    purchases = []
+    with open(filename) as f:
+        *_, price_raw = line.partition(",")
+        purchases.append(float(price_raw))
+    return purchases
+
+# 파일에서 모든 정보를 읽어서 리스트에 저장한다. 그러나 성능에 문제가 있다. 파일에 상당히 많은 데이터가 있다면 로드하는데 시간이 오래 걸리고 메인 메모리에 담지 못할 만큼 큰 데이터일 수도 있다. 그러면 purchases를 하나씩 들고가서 들고 있을 이유가 없다.
+
+def load_purchases(filename):
+    with open(filename) as f:
+        for line in f:
+            *_, price_raw = line.partition(',')
+            yield float(price_raw)
+# 이렇게 수정하면 메모리 사용량이 급격하게 떨어진다. 결과를 담을 리스트가 필요 없어졌으며 return 문 또한 사라졌다.
+# 이 경우 load_purchases 함수를 제너레이터 함수 또는 제너레이터라고 보른다
+```
+- 어떤 함수라도 yield를 붙이면 제너레이터 함수가 된다.
+- 모든 제너레이터 객체는 이터러블(iterable)이다.
+    - 이터러블은 for 루프와 함께 사용할 수 있다.
+    - 이터러블을 사용하면 다형성을 보장하는 이와 같은 강력한 추상화가 가능하다
+#### 제너레이터 표현식
+- 제너레이터를 사용하면 많은 메모리를 절약할 수 있다. 리스트나 튜플, 세트처럼 많은 메모리를 필요로 하는 이터러블이나 컨테이너의 대안이 될 수 있다.
+- list comprehension에 의해 정의될 수 있는 리스트나 세트, 사전처럼 제너레이터도 제너레이터 표현식으로 정의할 수 있다. 
+```python
+>>> [x**2 for x in range(10)]
+>>> (x**2 for x in range(10))
+>>> sum(x**2 for x in range(10))
+```
 ---
 test coder 만들기
 ---
