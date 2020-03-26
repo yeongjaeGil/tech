@@ -26,7 +26,6 @@ $git remote -v
     :연결되어 있는 원격 주소 조회
 $git config credential.helper store # 한번만 저장하면됨
 ```
-
 2) Git file 올리기
 
 ```

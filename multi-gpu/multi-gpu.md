@@ -13,9 +13,10 @@ cta Parallel이라는 기능 제공
 import torch.nn as nn
 model = nn.DataParallel(model)
 ```
-####과정
+#### 과정
 - replicate -> scatter -> Parallel_apply -> gather 순서로 진행
     - 여기서 gather는 한 GPU에서 각 모델의 출력을 모아주기 때문에 하나의 gpu의 메모리 사용량이 많을 수 밖에 없음.
+![multi-gpu](img/multigpu_1.png)
 ```python
 def data_parallel(module, input, device_ids, output_device):
     replicas = nn.parallel.replicate(module, device_ids)
@@ -98,8 +99,11 @@ for i, (inputs, labels) in enumerate(trainloader):
 ## 100%까지 GPU 성능 올리기
 - Pytorch에서 Distributed 패키지 사용
 - multi-GPU 학습을 할 때도 분산 학습을 사용할 수 있다.
-- [tutorial 읽어보기](https://pytorch.org/tutorials/intermediate/dist_tuto.html)
-- [ImageNet 예제](https://github.com/pytorch/examples/blob/master/imagenet/main.py)의 main.py에서 multi-GPU 관련 부분 정리
+- 하나의 컴퓨터로 학습하는게 아니라 여러 컴퓨터를 사용해서 학습하는 경우를 위해 개발된 것이다. 하지만, multi-GPU 학습을 할 때도 분산 학습을 사용할 수 있다. 분산 학습을 직접 구현할 수도 있지만, pytorch에서 제공하는 기능을 사용할 수도 있다.
+    - [tutorial 읽어보기](https://pytorch.org/tutorials/intermediate/dist_tuto.html)
+    - 이건 아마 서버가 여러개 있을 때 사용하는 경우이다.
+- 여기는 하나 파일 쓰는 경우
+    - [ImageNet 예제](https://github.com/pytorch/examples/blob/master/imagenet/main.py)의 main.py에서 multi-GPU 관련 부분 정리
     - main.py를 실행하면 main이 실행되는데 main은 다시 main_worker 들을 multi-processing으로 실행
 ```python
 import torch.distributed as dist
@@ -125,10 +129,24 @@ acc = 0
 for i in range(args.num_epochs):
     model = train(model)
     acc = test(model, acc)
-
 ```
-# branch4
-# branch4
-# branch4
-# branch4
 
+# NVIDIA Apex를 사용해서 학습하기
+- 보통 딥러닝은 32비트 연산을 하는데 16비트 연산을 사용해서 메모리를 절약하고 학습 속도를 높이겠다는 의도로 만들어 진 것.
+- Mixed precision 연산 기능말고도 Distributed 관련 기능이 포함된다.
+- Apex의 Distributed DataParallel 기능을 하는 것이 DDP이다. 
+    - ![Apex](https://github.com/NVIDIA/apex/blob/master/examples/imagenet/main_amp.py)
+
+# Multi-GPU 학습 방법 선택하기
+- DataParallel
+    - 가장 기본적인 방법이지만 GPU 메모리 분귱형 문제
+- Custom DataParallel
+    - GPU 메모리 문제를 어느정도 해결해주지만 GPU를 제대로 활용하지 못한다는 문제
+- Distributed DataParallel
+    - 원래 분산학습을 위해 만들어진 pytorch 기능이지만 multi-GPU학습에도 사용할 수 있고 메모리 분균형 문제와 GPu를 활용하지 못하는 문제가 없엄음
+    - 간간히 문제들이 발생할 수 있음.
+- Nvidia Apex
+    - Nvidia에서 만든 Apex를 이용해서 multi-GPU 학습
+    - 이미지 같은 경우는 DataParallel 만으로 출분할 수 있다.(모델 자체가 클수는 있어도 모델 출력은 그렇게 크지 않음)
+    - BERT에서 GPU메모리 불균형 문제가 생기는 이유는 모델 출력이 상당히 크기 때문이다.
+    - 각 step마다 word의 개수만큼이 출력으로 나오기 때문에 이런 문제가 생긴다.
