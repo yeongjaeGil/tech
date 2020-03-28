@@ -135,7 +135,7 @@ for i in range(args.num_epochs):
 - 보통 딥러닝은 32비트 연산을 하는데 16비트 연산을 사용해서 메모리를 절약하고 학습 속도를 높이겠다는 의도로 만들어 진 것.
 - Mixed precision 연산 기능말고도 Distributed 관련 기능이 포함된다.
 - Apex의 Distributed DataParallel 기능을 하는 것이 DDP이다. 
-    - ![Apex](https://github.com/NVIDIA/apex/blob/master/examples/imagenet/main_amp.py)
+    - [Apex](https://github.com/NVIDIA/apex/blob/master/examples/imagenet/main_amp.py)
 
 # Multi-GPU 학습 방법 선택하기
 - DataParallel
@@ -150,3 +150,68 @@ for i in range(args.num_epochs):
     - 이미지 같은 경우는 DataParallel 만으로 출분할 수 있다.(모델 자체가 클수는 있어도 모델 출력은 그렇게 크지 않음)
     - BERT에서 GPU메모리 불균형 문제가 생기는 이유는 모델 출력이 상당히 크기 때문이다.
     - 각 step마다 word의 개수만큼이 출력으로 나오기 때문에 이런 문제가 생긴다.
+---
+# NVIDIA AI conference
+
+![distributed](img/multigpu_2.png)
+- 모델 설계 단계부터 multiGPU 구현
+    - 데이터가 큰 경우
+    - 학습시간이 오래 걸리는 경우
+    - 모델 구현 단계에 검증 작업이 빈번하게 발생시 시간절약
+    - 규모있는 문제 도전 가능
+    - Google's GNMT, Transformer, BERT, GPT-2,XLNet
+    - GLOW, PGGAN, StyleGAN, WaveGlow
+
+- Template for New Project
+    - 신규 프로젝트 작업시 
+        - Model, Data Loader, Train script 분리
+```
+pytorch
+    requirement.txt
+    Dockerfile
+    README.md
+    train.py
+    model.py
+    inference.py
+    config.json
+    modules
+        my_layers.py
+        SpecAug.py
+    utils
+        audio_processing.py
+        data_utils.py
+    scripts
+        dataset.sh(shell)
+```
+- 예시: NV-Tacotron2
+- NV-wavenet
+- WaveGlow
+
+접근 방법
+- PYTORCH DataParalle(DP)
+- PYTORCH Distributed Data Paralle(DDP)
+    - synchronize gradients, parameters and buffers
+- horovod-pytorch
+- APEX (NVIDIA custom DDP)
+
+```python
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
+from torch.nn import DataParallel as DP
+
+if args.distributed:
+    if args.gpu is not None:
+        torch.cuda.set_device(args.gpu)
+        model.cuda(args.gpu)
+        args.batch_size = int(args.batch_size/ngpus_per_node)
+        args.workers = int(args.workers/ngpus_per_node)
+        model = DDP(model, device_ids = [args.gpu])
+    else:
+        model.cuda()
+        model = DDP(model)
+else:
+    model.cuda()
+    model = DP(model)
+```
+
+[NVIDIA refe](https://ngc.nvidia.com/catalog/model-scripts?orderBy=modifiedDESC&pageNumber=1&query=&quickFilter=&filters=)
