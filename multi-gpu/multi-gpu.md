@@ -1,5 +1,10 @@
-
-cta Parallel이라는 기능 제공
+## Multi GPU [출처: 당근마켓-multi-GPU](https://medium.com/daangn/pytorch-multi-gpu-%ED%95%99%EC%8A%B5-%EC%A0%9C%EB%8C%80%EB%A1%9C-%ED%95%98%EA%B8%B0-27270617936b)
+--- 
+- 여러개의 GPU를 사용하는데 각 GPU마다 memory 사용량이 다른 문제가 발생할 수 있다.
+- 하나의 GPU를 사용해서 학습하는 경우보다 그닥 학습이 빨라지지 않는 경우도 많다.
+- 제대로 사용하자
+---
+- Pytorch에서 Data Parallel이라는 기능 제공
 - 1) 모델을 각 GPU에 복사해서 할당
 - 2) 매 iteration 마다 batch를 GPU의 개수만큼 분할(scatter)
 - 3) GPU 에서 forward 과정을 진행
@@ -13,10 +18,9 @@ cta Parallel이라는 기능 제공
 import torch.nn as nn
 model = nn.DataParallel(model)
 ```
-#### 과정
+####과정
 - replicate -> scatter -> Parallel_apply -> gather 순서로 진행
     - 여기서 gather는 한 GPU에서 각 모델의 출력을 모아주기 때문에 하나의 gpu의 메모리 사용량이 많을 수 밖에 없음.
-![multi-gpu](img/multigpu_1.png)
 ```python
 def data_parallel(module, input, device_ids, output_device):
     replicas = nn.parallel.replicate(module, device_ids)
