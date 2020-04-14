@@ -219,3 +219,58 @@ else:
 ```
 
 [NVIDIA refe](https://ngc.nvidia.com/catalog/model-scripts?orderBy=modifiedDESC&pageNumber=1&query=&quickFilter=&filters=)
+
+---
+[https://blog.naver.com/laonple/220667260878](https://blog.naver.com/laonple/220667260878)
+#### GPU
+- Why GPU?
+    - 연산량!
+    - convolutional layer: 전체 연산량의 90~95%를 차지하지만, free parameter개수는 5%
+    - Fully connected layer: 전체 연산량의 5~10%를 차지하지만, gree parameter개수는 95%
+- convolutional layer는 픽셀의 위치를 옮기면서 matrix-multiplication을 진행하므로 연산 개수가 매우 많다.
+    - 이는 아무 좋은 병렬적인 특징(parallelism)을 갖는다.
+- Conveolutional layer
+    - 여러 개의 입력 feature-map으로 부터 여러개의 filter 연산을 수행하기 때문에 높은 수준의 data parallelism이 존재 
+    - Data parallelism: each worker trains the same convolutional layers on a different data batch.
+- FC
+    - Model parallelism: all workers train on same batch; workers communicate as frequently as network allows
+
+
+---
+#### BASIC tutorial
+- DistributedDataParallel(DDP): 모듈레벨에서 데이터 병렬화를 실행하는 것이다.
+- synchronize gradients, parameters, and buffers
+- Parallelism is available within a process and across processes.
+
+#### DataParallel
+```python
+device = torch.device('cuda:0')
+```
+```python
+import torch
+import torch.nn as nn
+
+def DataParallelModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.block1 = nn.Linear(10,20)
+        self.block2 = nn.Linear(20,20)
+        self.block2 = nn.DataParallel(self.bloack2)
+        self.block3 = nn.Linear(20,20)
+    
+    def forward(self, x):
+        x = self.block1(x)
+        x = self.block2(x)
+        x = self.block3(x)
+        return x
+```
+- Primitives on which DataParallel is implemented upon
+    - replicas = 
+```python
+
+```
+
+---
+- CPU: 코어 개수 보다는 단일 쿨럭이 높아야함
+- RAM: 다다익램
+- GPU: 메모리 클수록, 코어가 많고 쿨럭이 높을수록 빠르다. badwidth도 중요.

@@ -114,3 +114,16 @@ root ALL=(ALL:ALL) ALL
     - 4. (로컬) cat ~/.ssh/id_rsa.pub |pbcopy
     - 5. (서버) vi ~/.ssh/authorized_keys
     - 6. 제일 상단에 붙여 넣기 한 뒤 저장
+
+- 해당 파일 미리보기
+```
+cat file.txt
+head file.txt
+tail file.txt
+python example.py > file.txt #example.py를 실행시켜 결과를 file.txt로 저장해라
+python example.py >> file.txt # 기존의 것을 중첩 시켜서 저장시킬 수 있음.
+```
+- shell script
+```
+# !/bin/bash
+```
